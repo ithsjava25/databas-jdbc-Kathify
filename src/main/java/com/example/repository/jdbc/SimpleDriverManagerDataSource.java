@@ -27,7 +27,6 @@ public class SimpleDriverManagerDataSource implements DataSource {
         return DriverManager.getConnection(url, username, password);
     }
 
-    // Rest av DataSource-metoderna kan lämnas tomma eller kasta UnsupportedOperationException
     @Override public <T> T unwrap(Class<T> iface) { throw new UnsupportedOperationException(); }
     @Override public boolean isWrapperFor(Class<?> iface) { return false; }
     @Override public java.io.PrintWriter getLogWriter() { return null; }

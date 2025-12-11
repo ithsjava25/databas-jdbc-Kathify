@@ -25,7 +25,7 @@ public class Main {
     }
 
     public void run() {
-        // dataSource och repositories
+        // dataSource o repositories
         DataSource ds = new SimpleDriverManagerDataSource(
                 System.getProperty("APP_JDBC_URL"),
                 System.getProperty("APP_DB_USER"),
@@ -118,7 +118,7 @@ public class Main {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        String name = first.substring(0, 3) + last.substring(0, 3); // som init.sql
+        String name = first.substring(0, 3) + last.substring(0, 3);
         Account account = new Account(0, name, password, first, last, ssn);
         repo.create(account);
         System.out.println("Account created");
