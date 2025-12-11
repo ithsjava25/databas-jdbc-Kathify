@@ -13,21 +13,12 @@ import com.example.repository.jdbc.SimpleDriverManagerDataSource;
 
 public class Main {
 
-    /**
-     * Huvudmetoden som startar CLI-applikationen.
-     *
-     */
     public static void main(String[] args) {
         new Main().run();
     }
 
     private final Scanner scanner = new Scanner(System.in);
 
-    /**
-     * skriver ut ett meddelande till konsolen.
-     *
-     * @param s meddelandet som ska skrivas ut
-     */
     private void print(String s) {
         System.out.println(s);
     }
