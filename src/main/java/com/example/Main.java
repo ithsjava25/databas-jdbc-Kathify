@@ -11,21 +11,29 @@ import com.example.repository.jdbc.JdbcAccountRepository;
 import com.example.repository.jdbc.JdbcMoonMissionRepository;
 import com.example.repository.jdbc.SimpleDriverManagerDataSource;
 
-
 public class Main {
 
+    /**
+     * Huvudmetoden som startar CLI-applikationen.
+     *
+     */
     public static void main(String[] args) {
         new Main().run();
     }
 
     private final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * skriver ut ett meddelande till konsolen.
+     *
+     * @param s meddelandet som ska skrivas ut
+     */
     private void print(String s) {
         System.out.println(s);
     }
 
     public void run() {
-        // dataSource o repositories
+        // skapa DataSource o repositories
         DataSource ds = new SimpleDriverManagerDataSource(
                 System.getProperty("APP_JDBC_URL"),
                 System.getProperty("APP_DB_USER"),
@@ -35,11 +43,13 @@ public class Main {
         AccountRepository accountRepo = new JdbcAccountRepository(ds);
         MoonMissionRepository moonRepo = new JdbcMoonMissionRepository(ds);
 
+        // be om användarnamn o lösenord
         print("Username: ");
         String username = scanner.nextLine();
         print("Password: ");
         String password = scanner.nextLine();
 
+        // autentisera användaren
         Optional<Account> loggedIn = accountRepo.findByName(username);
         if (loggedIn.isEmpty() || !loggedIn.get().password().equals(password)) {
             print("Invalid username or password");
@@ -51,6 +61,7 @@ public class Main {
             printMenu();
             String choice = scanner.nextLine();
 
+            // hantera menyval
             switch (choice) {
                 case "1" -> listMissions(moonRepo);
                 case "2" -> getMissionById(moonRepo);
@@ -64,6 +75,9 @@ public class Main {
         }
     }
 
+    /**
+     * skriver ut menyn med tillgängliga alternativ.
+     */
     private void printMenu() {
         System.out.println("\nMenu:");
         System.out.println("1) List moon missions");
@@ -76,6 +90,11 @@ public class Main {
         System.out.print("Choose an option: ");
     }
 
+    /**
+     * listar alla månmissioner genom att skriva ut namnet på rymdfarkosten för varje mission.
+     *
+     * @param repo repository för att hämta månmisionerna
+     */
     private void listMissions(MoonMissionRepository repo) {
         List<MoonMission> missions = repo.findAll();
         for (MoonMission m : missions) {
@@ -83,6 +102,11 @@ public class Main {
         }
     }
 
+    /**
+     * hämtar o skriver ut detaljer för en månmision baserat på dess ID.
+     *
+     * @param repo repository för att hämta månmisssionerna
+     */
     private void getMissionById(MoonMissionRepository repo) {
         System.out.print("Mission ID: ");
         long id = Long.parseLong(scanner.nextLine());
@@ -101,6 +125,11 @@ public class Main {
         }
     }
 
+    /**
+     * räkna o skriver ut antalet månmisioner som genomfördes under ett visst år.
+     *
+     * @param repo repository för att hämta månmisionerna
+     */
     private void countMissionsByYear(MoonMissionRepository repo) {
         System.out.print("Year: ");
         int year = Integer.parseInt(scanner.nextLine());
@@ -108,6 +137,11 @@ public class Main {
         System.out.println("Number of missions in " + year + ": " + count);
     }
 
+    /**
+     * be användaren om information för att skapa ett nytt konto o sparar det i databasen.
+     *
+     * @param repo repository för att spara kontot
+     */
     private void createAccount(AccountRepository repo) {
         System.out.print("First name: ");
         String first = scanner.nextLine();
@@ -118,12 +152,18 @@ public class Main {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
+        // skapa ett konto med genererat namn
         String name = first.substring(0, 3) + last.substring(0, 3);
         Account account = new Account(0, name, password, first, last, ssn);
         repo.create(account);
         System.out.println("Account created");
     }
 
+    /**
+     * be användaren om ett användar-ID o ett nytt lösenord o uppdaterar lösenordet för kontot.
+     *
+     * @param repo repository för att uppdatera lösenordet
+     */
     private void updateAccountPassword(AccountRepository repo) {
         System.out.print("User ID: ");
         long id = Long.parseLong(scanner.nextLine());
@@ -133,6 +173,11 @@ public class Main {
         System.out.println("Password updated");
     }
 
+    /**
+     * be användaren om ett användar-ID o tar bort motsvarande konto från databasen.
+     *
+     * @param repo repository för att ta bort kontot
+     */
     private void deleteAccount(AccountRepository repo) {
         System.out.print("User ID: ");
         long id = Long.parseLong(scanner.nextLine());
