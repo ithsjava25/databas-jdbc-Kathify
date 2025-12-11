@@ -11,10 +11,19 @@ import java.util.Optional;
 public class JdbcAccountRepository implements AccountRepository {
     private final DataSource ds;
 
+    /**
+     * Creates a JdbcAccountRepository backed by the given DataSource.
+     */
     public JdbcAccountRepository(DataSource ds) {
         this.ds = ds;
     }
 
+    /**
+     * Look up an account by its name.
+     *
+     * @param name the account name to search for
+     * @return an Optional containing the matching Account if one exists, Optional.empty() otherwise
+     */
     @Override
     public Optional<Account> findByName(String name) {
         try (Connection c = ds.getConnection();
@@ -30,6 +39,12 @@ public class JdbcAccountRepository implements AccountRepository {
         return Optional.empty();
     }
 
+    /**
+     * Insert a new account record into the database.
+     *
+     * @param account the account to insert; its name, password, firstName, lastName, and ssn fields
+     *                are persisted to the corresponding columns
+     */
     @Override
     public void create(Account account) {
         try (Connection c = ds.getConnection();
@@ -46,6 +61,12 @@ public class JdbcAccountRepository implements AccountRepository {
         }
     }
 
+    /**
+     * Update the account password for the specified user ID.
+     *
+     * @param userId      the account's user_id primary key
+     * @param newPassword the new password value to store for the account
+     */
     @Override
     public void updatePassword(long userId, String newPassword) {
         try (Connection c = ds.getConnection();
@@ -59,6 +80,11 @@ public class JdbcAccountRepository implements AccountRepository {
         }
     }
 
+    /**
+     * Delete the account with the specified user ID from the repository.
+     *
+     * @param userId the identifier of the account to delete
+     */
     @Override
     public void delete(long userId) {
         try (Connection c = ds.getConnection();
@@ -70,6 +96,11 @@ public class JdbcAccountRepository implements AccountRepository {
         }
     }
 
+    /**
+     * Retrieve all accounts from the database.
+     *
+     * @return a list of Account objects representing every row in the `account` table; returns an empty list if no rows are found or if a database error occurs.
+     */
     @Override
     public List<Account> findAll() {
         List<Account> accounts = new ArrayList<>();
@@ -85,6 +116,13 @@ public class JdbcAccountRepository implements AccountRepository {
         return accounts;
     }
 
+    /**
+     * Map the current row of the given ResultSet to an Account.
+     *
+     * @param rs the ResultSet positioned at the row to map
+     * @return an Account populated from the current ResultSet row
+     * @throws SQLException if a database access error occurs or required columns are missing
+     */
     private Account mapRow(ResultSet rs) throws SQLException {
         return new Account(
                 rs.getLong("user_id"),
