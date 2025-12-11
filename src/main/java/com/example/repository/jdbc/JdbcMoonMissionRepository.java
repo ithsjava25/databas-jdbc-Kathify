@@ -12,10 +12,18 @@ import java.util.Optional;
 public class JdbcMoonMissionRepository implements MoonMissionRepository {
     private final DataSource ds;
 
+    /**
+     * Create a JdbcMoonMissionRepository backed by the provided DataSource.
+     */
     public JdbcMoonMissionRepository(DataSource ds) {
         this.ds = ds;
     }
 
+    /**
+     * Retrieves all MoonMission records from the data source.
+     *
+     * @return a List containing all MoonMission instances; an empty list if no records are found or a database error occurs.
+     */
     @Override
     public List<MoonMission> findAll() {
         List<MoonMission> missions = new ArrayList<>();
@@ -31,6 +39,12 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
         return missions;
     }
 
+    /**
+     * Finds a moon mission by its mission identifier.
+     *
+     * @param id the mission identifier to look up
+     * @return an Optional containing the matching MoonMission if found, `Optional.empty()` otherwise
+     */
     @Override
     public Optional<MoonMission> findById(long id) {
         try (Connection c = ds.getConnection();
@@ -46,6 +60,12 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
         return Optional.empty();
     }
 
+    /**
+     * Count moon missions launched in the specified year.
+     *
+     * @param year the calendar year to count missions for
+     * @return the number of missions launched in that year; 0 if none are found or a database error occurs
+     */
     @Override
     public int countByYear(int year) {
         try (Connection c = ds.getConnection();
@@ -62,6 +82,15 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
         return 0;
     }
 
+    /**
+     * Create a MoonMission from the current row of the given ResultSet.
+     *
+     * @param rs ResultSet positioned at the row to map; must contain the columns
+     *           "mission_id", "spacecraft", "launch_date", "carrier_rocket",
+     *           "operator", "mission_type", and "outcome".
+     * @return a MoonMission populated from the ResultSet row
+     * @throws SQLException if a database access error occurs or a required column is missing
+     */
     private MoonMission mapRow(ResultSet rs) throws SQLException {
         return new MoonMission(
                 rs.getLong("mission_id"),

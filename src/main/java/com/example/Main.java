@@ -13,16 +13,37 @@ import com.example.repository.jdbc.SimpleDriverManagerDataSource;
 
 public class Main {
 
+    /**
+     * Application entry point that constructs a Main instance and starts its interactive run loop.
+     *
+     * @param args command-line arguments (ignored)
+     */
     public static void main(String[] args) {
         new Main().run();
     }
 
     private final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Prints a line of text to standard output.
+     *
+     * @param s the text to print
+     */
     private void print(String s) {
         System.out.println(s);
     }
 
+    /**
+     * Run the interactive console application: initialize data sources and repositories, authenticate a user,
+     * then present and handle the menu-driven command loop.
+     *
+     * <p>Initializes a DataSource from system properties {@code APP_JDBC_URL}, {@code APP_DB_USER},
+     * and {@code APP_DB_PASS}, and creates JDBC-backed Account and MoonMission repositories. Prompts
+     * for username and password on standard input and performs authentication; if authentication
+     * fails the method returns. After successful authentication, enters a loop that displays a menu
+     * and performs actions such as listing missions, retrieving a mission by ID, counting missions by
+     * year, and creating/updating/deleting accounts. The loop exits when the user selects the exit option.
+     */
     public void run() {
         // skapa DataSource o repositories
         DataSource ds = new SimpleDriverManagerDataSource(
@@ -67,7 +88,7 @@ public class Main {
     }
 
     /**
-     * skriver ut menyn med tillgängliga alternativ.
+     * Prints the interactive menu of available user actions and prompts for a choice.
      */
     private void printMenu() {
         System.out.println("\nMenu:");
@@ -82,9 +103,9 @@ public class Main {
     }
 
     /**
-     * listar alla månmissioner genom att skriva ut namnet på rymdfarkosten för varje mission.
+     * Prints the spacecraft name of every moon mission retrieved from the repository.
      *
-     * @param repo repository för att hämta månmisionerna
+     * @param repo the repository used to fetch moon missions
      */
     private void listMissions(MoonMissionRepository repo) {
         List<MoonMission> missions = repo.findAll();
@@ -94,9 +115,12 @@ public class Main {
     }
 
     /**
-     * hämtar o skriver ut detaljer för en månmision baserat på dess ID.
+     * Print detailed information for a moon mission identified by its ID.
      *
-     * @param repo repository för att hämta månmisssionerna
+     * Prompts the user for a mission ID, retrieves the mission from the repository,
+     * and prints the mission's fields or "Mission not found" if no mission exists.
+     *
+     * @param repo repository used to retrieve moon missions
      */
     private void getMissionById(MoonMissionRepository repo) {
         System.out.print("Mission ID: ");
@@ -117,10 +141,10 @@ public class Main {
     }
 
     /**
-     * räkna o skriver ut antalet månmisioner som genomfördes under ett visst år.
-     *
-     * @param repo repository för att hämta månmisionerna
-     */
+         * Prompts for a year, counts how many moon missions occurred in that year, and prints the result.
+         *
+         * @param repo repository used to retrieve the mission count for the specified year
+         */
     private void countMissionsByYear(MoonMissionRepository repo) {
         System.out.print("Year: ");
         int year = Integer.parseInt(scanner.nextLine());
@@ -129,9 +153,11 @@ public class Main {
     }
 
     /**
-     * be användaren om information för att skapa ett nytt konto o sparar det i databasen.
+     * Prompts the user for personal details, creates a new Account with a generated username, and saves it.
      *
-     * @param repo repository för att spara kontot
+     * Prompts for first name, last name, SSN, and password; generates a username by concatenating the first
+     * three characters of the first name and the first three characters of the last name; constructs an
+     * Account (id 0) and persists it via the provided repository, then prints a confirmation message.
      */
     private void createAccount(AccountRepository repo) {
         System.out.print("First name: ");
@@ -151,9 +177,9 @@ public class Main {
     }
 
     /**
-     * be användaren om ett användar-ID o ett nytt lösenord o uppdaterar lösenordet för kontot.
+     * Prompts for a user ID and a new password, then updates that account's password using the repository.
      *
-     * @param repo repository för att uppdatera lösenordet
+     * @param repo repository used to update the account password
      */
     private void updateAccountPassword(AccountRepository repo) {
         System.out.print("User ID: ");
@@ -165,9 +191,9 @@ public class Main {
     }
 
     /**
-     * be användaren om ett användar-ID o tar bort motsvarande konto från databasen.
+     * Prompts for a user ID, deletes the corresponding account from the repository, and prints a confirmation.
      *
-     * @param repo repository för att ta bort kontot
+     * @param repo repository used to remove the account by ID
      */
     private void deleteAccount(AccountRepository repo) {
         System.out.print("User ID: ");
