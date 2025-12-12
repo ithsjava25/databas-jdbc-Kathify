@@ -11,10 +11,16 @@ import java.util.Optional;
 public class JdbcAccountRepository implements AccountRepository {
     private final DataSource ds;
 
+    /**
+     * Skapar ett JdbcAccountRepository med angiven DataSource.
+     */
     public JdbcAccountRepository(DataSource ds) {
         this.ds = ds;
     }
 
+    /**
+     * Hämtar ett konto från databasen baserat på användarnamnet.
+     */
     @Override
     public Optional<Account> findByName(String name) {
         try (Connection c = ds.getConnection();
@@ -30,6 +36,11 @@ public class JdbcAccountRepository implements AccountRepository {
         return Optional.empty();
     }
 
+    /**
+     * skapar ett nytt konto i databasen
+     *
+     * @param account Kontot som ska skapas
+     */
     @Override
     public void create(Account account) {
         try (Connection c = ds.getConnection();
@@ -46,6 +57,12 @@ public class JdbcAccountRepository implements AccountRepository {
         }
     }
 
+    /**
+     * uppdaterar lösenordet för ett konto med angivet userId
+     *
+     * @param userId ID:t för användaren vars lösenord ska uppdateras
+     * @param newPassword det nya lösenordet för användaren
+     */
     @Override
     public void updatePassword(long userId, String newPassword) {
         try (Connection c = ds.getConnection();
@@ -59,6 +76,11 @@ public class JdbcAccountRepository implements AccountRepository {
         }
     }
 
+    /**
+     * tar bort ett konto från databasen baserat på userId
+     *
+     * ID:t för användaren vars konto ska tas bort
+     */
     @Override
     public void delete(long userId) {
         try (Connection c = ds.getConnection();
@@ -70,6 +92,11 @@ public class JdbcAccountRepository implements AccountRepository {
         }
     }
 
+    /**
+     * hämtar alla konton från databasen
+     *
+     * return En lista med alla konton
+     */
     @Override
     public List<Account> findAll() {
         List<Account> accounts = new ArrayList<>();
@@ -85,6 +112,13 @@ public class JdbcAccountRepository implements AccountRepository {
         return accounts;
     }
 
+    /**
+     * mappar en rad från ResultSet till ett Account-objekt
+     *
+     * @param rs ResultSet som innehåller datan för en rad
+     * @return Ett Account-objekt
+     * @throws SQLException Om det uppstår ett fel vid hämtning av data
+     */
     private Account mapRow(ResultSet rs) throws SQLException {
         return new Account(
                 rs.getLong("user_id"),
