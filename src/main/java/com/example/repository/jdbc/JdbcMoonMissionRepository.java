@@ -17,18 +17,16 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     private final DataSource ds;
 
     /**
-     * Skapar repository med given DataSource
-     *
-     * @param ds datakälla (DataSource) som används för databaskopplingar
+     * Creates a JdbcMoonMissionRepository backed by the provided DataSource.
      */
     public JdbcMoonMissionRepository(DataSource ds) {
         this.ds = ds;
     }
 
     /**
-     * hämtar alla månuppdrag från databasen
+     * Fetches all moon missions.
      *
-     * @return lista med alla MoonMission-objekt, tom lista om inga uppdrag finns
+     * @return a {@code List<MoonMission>} containing all missions; empty list if none are found or an error occurs
      */
     @Override
     public List<MoonMission> findAll() {
@@ -47,10 +45,10 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     }
 
     /**
-     * hämtar ett månuppdrag med angivet ID
+     * Retrieve a moon mission by its mission_id.
      *
-     * @param id ID för uppdraget som ska hämtas
-     * @return ett Optional med MoonMission om uppdraget finns, annars Optional.empty()
+     * @param id the mission's primary key (mission_id)
+     * @return an Optional containing the MoonMission when found, `Optional.empty()` otherwise
      */
     @Override
     public Optional<MoonMission> findById(long id) {
@@ -70,10 +68,10 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     }
 
     /**
-     * räknar antalet månuppdrag som skedde under ett visst år
+     * Count the moon missions whose launch date falls in the specified calendar year.
      *
-     * @param year året som uppdrag ska räknas för
-     * @return antal uppdrag under det angivna året
+     * @param year the calendar year to count launches for
+     * @return the number of missions launched in the given year; returns 0 if no missions are found or if a database error occurs
      */
     @Override
     public int countByYear(int year) {
@@ -94,11 +92,11 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     }
 
     /**
-     * skapar ett MoonMission-objekt från en databasrad
+     * Creates a MoonMission object from the current row of the provided ResultSet.
      *
-     * @param rs ResultSet som pekar på en rad i databasen
-     * @return ett MoonMission-objekt som representerar raden
-     * @throws SQLException om det uppstår fel vid åtkomst av databasen
+     * @param rs the ResultSet positioned at the row to map
+     * @return a MoonMission populated with values from the current ResultSet row
+     * @throws SQLException if an error occurs while reading from the ResultSet
      */
     private MoonMission mapRow(ResultSet rs) throws SQLException {
         return new MoonMission(
