@@ -13,8 +13,10 @@ public class DevDatabaseInitializer {
     private static MySQLContainer<?> mysql;
 
     /**
-     * startar MySQL-containern om den inte redan är startad
-     * sätter systemegenskaper för anslutning till databasen
+     * Initialize and start a Testcontainers MySQL container for development if it is not already running.
+     *
+     * When a new container is created and started, this method sets the system properties
+     * "APP_JDBC_URL", "APP_DB_USER", and "APP_DB_PASS" to the container's JDBC URL, username, and password respectively.
      */
     public static void start() {
         if (mysql == null) {

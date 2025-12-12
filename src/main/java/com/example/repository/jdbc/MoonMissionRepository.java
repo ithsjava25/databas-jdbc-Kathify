@@ -11,17 +11,25 @@ import java.util.Optional;
 public interface MoonMissionRepository {
 
     /**
-     * hämtar alla månuppdrag
-     */
+ * Retrieve all MoonMission records.
+ *
+ * @return a list of MoonMission objects; an empty list if no records exist
+ */
     List<MoonMission> findAll();
 
     /**
-     *hämtar ett månuppdrag baserat på dess ID
-     */
+ * Finds a moon mission by its unique identifier.
+ *
+ * @param id the unique identifier of the moon mission to retrieve
+ * @return an Optional containing the MoonMission if found, or an empty Optional otherwise
+ */
     Optional<MoonMission> findById(long id);
 
     /**
-     * räknar hur många månuppdrag som inträffade under ett visst år
-     */
+ * Counts MoonMission records that occurred in the specified year.
+ *
+ * @param year the calendar year to count missions for (e.g., 1969)
+ * @return the number of MoonMission records that occurred in the specified year
+ */
     int countByYear(int year);
 }

@@ -23,12 +23,20 @@ public class JdbcAccountRepository implements AccountRepository {
     private static final int ITERATIONS = 65536;
     private static final int KEY_LENGTH = 256;
 
+    /**
+     * Creates a JdbcAccountRepository that uses the provided DataSource for database access.
+     *
+     * @param ds the DataSource used to obtain JDBC connections
+     */
     public JdbcAccountRepository(DataSource ds) {
         this.ds = ds;
     }
 
     /**
-     * hämtar ett konto baserat på användarnamn
+     * Retrieve an account by its account name.
+     *
+     * @param name the account name to look up
+     * @return an {@link Optional} containing the matching {@link Account} if found, otherwise {@link Optional#empty()}
      */
     @Override
     public Optional<Account> findByName(String name) {
@@ -49,7 +57,14 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * skapar ett nytt konto med hashat lösenord
+     * Creates a new account and persists it to the database with a securely hashed password.
+     *
+     * Generates a cryptographic salt, hashes the account's plaintext password using PBKDF2, encodes
+     * the salt in Base64, and inserts the account's name, hashed password, salt, first name, last name,
+     * and SSN into the account table.
+     *
+     * @param account the account to create; the account's plaintext password will be hashed and the
+     *                resulting hash and generated salt will be stored in the database
      */
     @Override
     public void create(Account account) {
@@ -74,7 +89,10 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * uppdaterar lösenord och sparar det hashat med nytt salt
+     * Updates the account's password for the given user ID and stores it hashed with a new random salt.
+     *
+     * @param userId the identifier of the account to update
+     * @param newPassword the plaintext new password to be hashed and stored
      */
     @Override
     public void updatePassword(long userId, String newPassword) {
@@ -96,7 +114,9 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * tar bort ett konto baserat på userId
+     * Delete the account with the given user ID.
+     *
+     * @param userId the account's user_id primary key
      */
     @Override
     public void delete(long userId) {
@@ -112,7 +132,9 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * hämtar alla konton
+     * Retrieve all accounts from the database.
+     *
+     * @return a list of Account objects; empty if no accounts are found or if a database error occurs
      */
     @Override
     public List<Account> findAll() {
@@ -132,7 +154,11 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * mappar en rad från ResultSet till Account
+     * Create an Account instance from the current row of the given ResultSet.
+     *
+     * @param rs the ResultSet positioned at the row to map
+     * @return the Account populated from the current ResultSet row
+     * @throws SQLException if reading any column from the ResultSet fails
      */
     private Account mapRow(ResultSet rs) throws SQLException {
         return new Account(
@@ -145,7 +171,11 @@ public class JdbcAccountRepository implements AccountRepository {
         );
     }
 
-    /* PBKDF2 helpers  */
+    /**
+     * Generates a cryptographically secure random salt.
+     *
+     * @return a 16-byte cryptographically secure random salt
+     */
 
     private byte[] generateSalt() {
         SecureRandom sr = new SecureRandom();
@@ -155,12 +185,12 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * hashar ett lösenord med PBKDF2 o angivet salt
+     * Hashes a password using PBKDF2 with HMAC-SHA256 and the provided salt.
      *
-     * @param password lösenordet som ska hashats
-     * @param salt slumpmässigt salt som används vid hashning
-     * @return den hashade lösenordssträngen i Base64-format
-     * @throws RuntimeException om hashning misslyckas
+     * @param password the plaintext password to hash
+     * @param salt the cryptographic salt as a byte array
+     * @return the resulting hash encoded as a Base64 string
+     * @throws RuntimeException if the hashing operation fails
      */
     private String hashPassword(String password, byte[] salt) {
         try {
@@ -174,7 +204,12 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * verifierar om ett lösenord matchar hash + salt
+     * Checks whether a plaintext password matches a stored password hash and salt.
+     *
+     * @param password    the plaintext password to verify
+     * @param storedHash  the Base64-encoded stored password hash
+     * @param storedSalt  the Base64-encoded salt used to produce the stored hash
+     * @return            `true` if the password, when hashed with the decoded salt, equals the stored hash, `false` otherwise
      */
     public boolean verifyPassword(String password, String storedHash, String storedSalt) {
         byte[] salt = Base64.getDecoder().decode(storedSalt);

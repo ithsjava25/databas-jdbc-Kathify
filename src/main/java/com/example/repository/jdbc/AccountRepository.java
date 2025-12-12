@@ -10,39 +10,39 @@ import java.util.Optional;
 public interface AccountRepository {
 
     /**
-     * hämtar ett konto baserat på användarnamn
-     *
-     * @param name användarnamn
-     * @return ett Optional med kontot om det finns
-     */
+ * Finds an account by username.
+ *
+ * @param name the username to look up
+ * @return an Optional containing the Account when a matching username exists, otherwise an empty Optional
+ */
     Optional<Account> findByName(String name);
 
     /**
-     * skapar ett nytt konto
-     *
-     * @param account kontot som ska skapas
-     */
+ * Creates a new account in the repository.
+ *
+ * @param account the Account to create
+ */
     void create(Account account);
 
     /**
-     * uppdaterar lösenordet för ett konto
-     *
-     * @param userId ID för användaren
-     * @param newPassword det nya lösenordet
-     */
+ * Update the password for the account with the given user ID.
+ *
+ * @param userId the ID of the account to update
+ * @param newPassword the new password to set for the account
+ */
     void updatePassword(long userId, String newPassword);
 
     /**
-     * tar bort ett konto
-     *
-     * @param userId ID för användaren som ska tas bort
-     */
+ * Delete an account by its user ID.
+ *
+ * @param userId the ID of the account to delete
+ */
     void delete(long userId);
 
     /**
-     * hämtar alla konton.
-     *
-     * @return lista med alla konton
-     */
+ * Retrieve all accounts.
+ *
+ * @return a list of Account objects containing all accounts
+ */
     List<Account> findAll();
 }
