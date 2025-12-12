@@ -10,20 +10,25 @@ import java.util.Optional;
 
 /**
  * JDBC-repository för MoonMission.
+ * Ansvarar för att hämta, räkna o mappa månuppdrag från databasen
  */
 public class JdbcMoonMissionRepository implements MoonMissionRepository {
 
     private final DataSource ds;
 
     /**
-     * skapar repository med given DataSource
+     * Skapar repository med given DataSource
+     *
+     * @param ds datakälla (DataSource) som används för databaskopplingar
      */
     public JdbcMoonMissionRepository(DataSource ds) {
         this.ds = ds;
     }
 
     /**
-     * hämtar alla månuppdrag
+     * hämtar alla månuppdrag från databasen
+     *
+     * @return lista med alla MoonMission-objekt, tom lista om inga uppdrag finns
      */
     @Override
     public List<MoonMission> findAll() {
@@ -42,7 +47,10 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     }
 
     /**
-     * hämtar ett uppdrag med angivet ID
+     * hämtar ett månuppdrag med angivet ID
+     *
+     * @param id ID för uppdraget som ska hämtas
+     * @return ett Optional med MoonMission om uppdraget finns, annars Optional.empty()
      */
     @Override
     public Optional<MoonMission> findById(long id) {
@@ -62,7 +70,10 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     }
 
     /**
-     * räknar uppdrag för ett visst år
+     * räknar antalet månuppdrag som skedde under ett visst år
+     *
+     * @param year året som uppdrag ska räknas för
+     * @return antal uppdrag under det angivna året
      */
     @Override
     public int countByYear(int year) {
@@ -83,7 +94,11 @@ public class JdbcMoonMissionRepository implements MoonMissionRepository {
     }
 
     /**
-     * skapar ett MoonMission-objekt från en databastrad
+     * skapar ett MoonMission-objekt från en databasrad
+     *
+     * @param rs ResultSet som pekar på en rad i databasen
+     * @return ett MoonMission-objekt som representerar raden
+     * @throws SQLException om det uppstår fel vid åtkomst av databasen
      */
     private MoonMission mapRow(ResultSet rs) throws SQLException {
         return new MoonMission(

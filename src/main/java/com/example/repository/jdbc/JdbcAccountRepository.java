@@ -154,6 +154,14 @@ public class JdbcAccountRepository implements AccountRepository {
         return salt;
     }
 
+    /**
+     * hashar ett lösenord med PBKDF2 o angivet salt
+     *
+     * @param password lösenordet som ska hashats
+     * @param salt slumpmässigt salt som används vid hashning
+     * @return den hashade lösenordssträngen i Base64-format
+     * @throws RuntimeException om hashning misslyckas
+     */
     private String hashPassword(String password, byte[] salt) {
         try {
             PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH);
