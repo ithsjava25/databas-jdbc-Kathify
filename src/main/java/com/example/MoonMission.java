@@ -2,6 +2,9 @@ package com.example;
 
 import java.time.LocalDate;
 
+/**
+ * representerar ett månuppdrag
+ */
 public record MoonMission(
         long missionId,
         String spacecraft,
