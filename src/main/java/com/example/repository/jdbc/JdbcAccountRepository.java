@@ -28,7 +28,10 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * hämtar ett konto baserat på användarnamn
+     * hämtar ett konto baserat på användarnamn.
+     *
+     * @param name användarnamnet att söka efter
+     * @return Optional med Account om det finns, annars tomt
      */
     @Override
     public Optional<Account> findByName(String name) {
@@ -50,6 +53,8 @@ public class JdbcAccountRepository implements AccountRepository {
 
     /**
      * skapar ett nytt konto med hashat lösenord
+     *
+     * @param account kontot som ska sparas
      */
     @Override
     public void create(Account account) {
@@ -74,7 +79,10 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * uppdaterar lösenord och sparar det hashat med nytt salt
+     * uppdaterar lösenord o sparar det hashat med nytt salt
+     *
+     * @param userId ID för användaren vars lösenord ska ändras
+     * @param newPassword det nya klartextlösenordet
      */
     @Override
     public void updatePassword(long userId, String newPassword) {
@@ -97,6 +105,8 @@ public class JdbcAccountRepository implements AccountRepository {
 
     /**
      * tar bort ett konto baserat på userId
+     *
+     * @param userId id för kontot som ska tas bort
      */
     @Override
     public void delete(long userId) {
@@ -113,6 +123,8 @@ public class JdbcAccountRepository implements AccountRepository {
 
     /**
      * hämtar alla konton
+     *
+     * @return lista av Account
      */
     @Override
     public List<Account> findAll() {
@@ -132,7 +144,11 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * mappar en rad från ResultSet till Account
+     * mappar en rad från ResultSet till ett Account-objekt
+     *
+     * @param rs resultatsetets aktuella rad
+     * @return ett Account baserat på data i resultatsetet
+     * @throws SQLException om fält inte kan läsas
      */
     private Account mapRow(ResultSet rs) throws SQLException {
         return new Account(
@@ -145,8 +161,11 @@ public class JdbcAccountRepository implements AccountRepository {
         );
     }
 
-    /* PBKDF2 helpers  */
-
+    /**
+     * genererar ett nytt slumpmässigt salt för lösenordshashning
+     *
+     * @return en byte-array med slumpmässigt genererat salt (16 bytes)
+     */
     private byte[] generateSalt() {
         SecureRandom sr = new SecureRandom();
         byte[] salt = new byte[16];
@@ -159,7 +178,7 @@ public class JdbcAccountRepository implements AccountRepository {
      *
      * @param password lösenordet som ska hashats
      * @param salt slumpmässigt salt som används vid hashning
-     * @return den hashade lösenordssträngen i Base64-format
+     * @return Base64-sträng med det hashade lösenordet
      * @throws RuntimeException om hashning misslyckas
      */
     private String hashPassword(String password, byte[] salt) {
@@ -174,7 +193,12 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     /**
-     * verifierar om ett lösenord matchar hash + salt
+     * verifierar om ett angivet lösenord matchar ett lagrat hashat lösenord
+     *
+     * @param password klartextlösenordet som ska verifieras
+     * @param storedHash hashvärdet som finns lagrat för användaren
+     * @param storedSalt saltet (Base64-kodat) som användes vid hashningen
+     * @return true om lösenordet matchar hash + salt, annars blir det false
      */
     public boolean verifyPassword(String password, String storedHash, String storedSalt) {
         byte[] salt = Base64.getDecoder().decode(storedSalt);
