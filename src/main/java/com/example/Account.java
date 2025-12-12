@@ -1,5 +1,8 @@
 package com.example;
 
+/**
+ * representerar ett användarkonto
+ */
 public record Account(
         long userId,
         String name,
